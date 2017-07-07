@@ -13,6 +13,9 @@ class SlugOptions
     /** @var bool */
     public $generateUniqueSlug = true;
 
+    /** @var int */
+    public $maximumLength = 250;
+
     /** @var bool */
     public $generateSlugOnCreate = true;
 
@@ -63,6 +66,18 @@ class SlugOptions
     public function makeSlugUnique($unique = true)
     {
         $this->generateUniqueSlug = $unique;
+
+        return $this;
+    }
+
+    /**
+     * Set the maximum length
+     * @param int $maximumLength
+     * @return $this
+     */
+    public function maximumLength($maximumLength = 250)
+    {
+        $this->maximumLength = $maximumLength;
 
         return $this;
     }

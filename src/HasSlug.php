@@ -102,7 +102,9 @@ trait HasSlug
      */
     protected function generateNonUniqueSlug()
     {
-        return str_slug($this->getSlugSourceString(), $this->slugOptions->slugSeparator);
+        $slug = $this->getSlugSourceString();
+
+        return str_slug($slug, $this->slugOptions->slugSeparator);
     }
 
     /**
@@ -114,7 +116,7 @@ trait HasSlug
         if (is_callable($this->slugOptions->generateSlugFrom)) {
             $slug = call_user_func($this->slugOptions->generateSlugFrom, $this);
 
-            return $slug;
+            return substr($slug, 0, $this->slugOptions->maximumLength);
         }
 
         // concatenate on the fields and implode on seperator
@@ -123,7 +125,7 @@ trait HasSlug
             return $this->$fieldName;
         })->implode($this->slugOptions->slugSeparator);
 
-        return $slug;
+        return substr($slug, 0, $this->slugOptions->maximumLength);
     }
 
     /**
@@ -203,7 +205,7 @@ trait HasSlug
             }
         }
 
-        // new unique slug needed
+        // unique slug needed
         return false;
     }
 }
