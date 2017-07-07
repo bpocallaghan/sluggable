@@ -1,0 +1,28 @@
+{
+    "name": "bpocallaghan/sluggable",
+    "description": "Provides a HasSlug trait that will generate a unique slug when saving your Laravel Eloquent model.",
+    "keywords": [
+        "laravel",
+        "sluggable",
+        "slug",
+        "eloquent",
+        "unique"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben-Piet O'Callaghan",
+            "email": "bpocallaghan@gmail.com",
+            "homepage": "http://bpocallaghan.co.za",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bpocallaghan\\Sluggable\\": "src/"
+        }
+    }
+}
