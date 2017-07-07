@@ -4,7 +4,7 @@ namespace Bpocallaghan\Sluggable;
 
 class SlugOptions
 {
-    /** @var string|array */
+    /** @var string|array|callable */
     public $generateSlugFrom = 'name';
 
     /** @var string */
@@ -12,6 +12,12 @@ class SlugOptions
 
     /** @var bool */
     public $generateUniqueSlug = true;
+
+    /** @var bool */
+    public $generateSlugOnCreate = true;
+
+    /** @var bool */
+    public $generateSlugOnUpdate = true;
 
     /** @var string */
     public $slugSeparator = '-';
@@ -57,6 +63,30 @@ class SlugOptions
     public function makeSlugUnique($unique = true)
     {
         $this->generateUniqueSlug = $unique;
+
+        return $this;
+    }
+
+    /**
+     * If we need to generate a slug on create
+     * @param bool $onCreate
+     * @return $this
+     */
+    public function generateSlugOnCreate($onCreate = true)
+    {
+        $this->generateSlugOnCreate = $onCreate;
+
+        return $this;
+    }
+
+    /**
+     * If we need to generate a slug on update
+     * @param bool $onUpdate
+     * @return $this
+     */
+    public function generateSlugOnUpdate($onUpdate = true)
+    {
+        $this->generateSlugOnUpdate = $onUpdate;
 
         return $this;
     }

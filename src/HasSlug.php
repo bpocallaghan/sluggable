@@ -38,6 +38,10 @@ trait HasSlug
     {
         $this->slugOptions = $this->getSlugOptions();
 
+        if (!$this->slugOptions->generateSlugOnCreate) {
+            return;
+        }
+
         $this->createSlug();
     }
 
@@ -47,6 +51,10 @@ trait HasSlug
     protected function generateSlugOnUpdate()
     {
         $this->slugOptions = $this->getSlugOptions();
+
+        if (!$this->slugOptions->generateSlugOnUpdate) {
+            return;
+        }
 
         // check updating
         $slugNew = $this->generateNonUniqueSlug();
@@ -102,6 +110,13 @@ trait HasSlug
      */
     protected function getSlugSourceString()
     {
+        // if callback given
+        if (is_callable($this->slugOptions->generateSlugFrom)) {
+            $slug = call_user_func($this->slugOptions->generateSlugFrom, $this);
+
+            return $slug;
+        }
+
         // concatenate on the fields and implode on seperator
         $slug = collect($this->slugOptions->generateSlugFrom)
             ->map(function ($fieldName = '') {

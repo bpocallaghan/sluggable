@@ -57,7 +57,7 @@ You can use multiple fields as the source of the slug `generateSlugFrom(['firstn
 
 You can also pass a `callable` function to `generateSlugFrom()`.
 
-Have a look [here for the options](https://github.com/bpocallaghan/sluggable/src/SlugOptions.php) and available config functions.
+Have a look [here for the options](https://github.com/bpocallaghan/sluggable/blob/master/src/SlugOptions.php) and available config functions.
 
 ## Change log
 
