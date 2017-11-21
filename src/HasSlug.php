@@ -120,8 +120,7 @@ trait HasSlug
         }
 
         // concatenate on the fields and implode on seperator
-        $slug = collect($this->slugOptions->generateSlugFrom)
-            ->map(function ($fieldName = '') {
+        $slug = collect($this->slugOptions->generateSlugFrom)->map(function ($fieldName = '') {
             return $this->$fieldName;
         })->implode($this->slugOptions->slugSeparator);
 
@@ -129,12 +128,16 @@ trait HasSlug
     }
 
     /**
+     * Make the slug unique with suffix
      * @param $slug
      * @return string
      */
     protected function makeSlugUnique($slug)
     {
-        // get existing slugs
+        $i = 1;
+        $slugIsUnique = false;
+
+        // get existing slugs (1 db query)
         $list = $this->getExistingSlugs($slug);
 
         // slug is already unique
@@ -142,8 +145,20 @@ trait HasSlug
             return $slug;
         }
 
-        // generate unique suffix
-        return $this->generateSlugSuffix($slug, $list);
+        // collection to array
+        if (!is_array($list)) {
+            $list = $list->toArray();
+        }
+
+        // loop through the list and add suffix
+        while (!$slugIsUnique) {
+            $uniqueSlug = $slug . $this->slugOptions->slugSeparator . ($i++);
+            if (!in_array($uniqueSlug, $list)) {
+                $slugIsUnique = true;
+            }
+        }
+
+        return $uniqueSlug;
     }
 
     /**
@@ -160,27 +175,6 @@ trait HasSlug
             ->orderBy($this->slugOptions->slugField)
             ->get()
             ->pluck($this->slugOptions->slugField);
-    }
-
-    /**
-     * Suffix unique index to slug
-     *
-     * @param $slug
-     * @param $list
-     * @return string
-     */
-    private function generateSlugSuffix($slug, $list)
-    {
-        $seperator = $this->slugOptions->slugSeparator;
-
-        // loop through list and get highest index number
-        // incase the order is faulty
-        $index = $list->map(function ($s) use ($slug, $seperator) {
-            // str_replace instead of explode('-');
-            return intval(str_replace($slug . $seperator, '', $s));
-        })->sort()->last();
-
-        return $slug . $seperator . ($index + 1);
     }
 
     /**
