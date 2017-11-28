@@ -169,7 +169,7 @@ trait HasSlug
      */
     protected function getExistingSlugs($slug)
     {
-        return static::whereRaw("{$this->slugOptions->slugField} LIKE '$slug%'")
+        return static::where($this->slugOptions->slugField, 'LIKE', "{$slug}%")
             ->withoutGlobalScopes()// ignore scopes
             ->withTrashed()// trashed, when entry gets activated again
             ->orderBy($this->slugOptions->slugField)
