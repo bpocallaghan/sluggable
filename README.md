@@ -33,12 +33,41 @@ class YourEloquentModel extends Model
 {
     use HasSlug;
     
+    /**
+     * This function is optional and only required
+     * when you want to override the default behaviour
+     */
     protected function getSlugOptions()
     {
         return SlugOptions::create()
             ->slugSeperator('-')
             ->generateSlugFrom('name')
             ->saveSlugTo('slug');
+    }
+}
+```
+
+If you want to generate your slug from a relationship.
+
+```php
+class YourEloquentModel extends Model
+{
+    use HasSlug;
+    
+    public function getNameAndFooAttribute()
+    {
+        $name = $this->name;
+        if ($this->foo) {
+            $name .= " {$this->foo->name}";
+        }
+
+        return $name;
+    }
+    
+    protected function getSlugOptions()
+    {
+        return SlugOptions::create()
+            ->generateSlugFrom('name_and_foo');
     }
 }
 ```
