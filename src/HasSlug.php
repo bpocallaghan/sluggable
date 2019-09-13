@@ -2,6 +2,7 @@
 
 namespace Bpocallaghan\Sluggable;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasSlug
@@ -104,7 +105,7 @@ trait HasSlug
     {
         $slug = $this->getSlugSourceString();
 
-        return str_slug($slug, $this->slugOptions->slugSeparator);
+        return Str::slug($slug, $this->slugOptions->slugSeparator);
     }
 
     /**

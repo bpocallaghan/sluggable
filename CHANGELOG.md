@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0 - 2019-09-13
+- Remove deprecated function (Laravel 6)
+
 ## 1.2.0 - 2017-07-07
 - add `maximumLength(255)`
 
