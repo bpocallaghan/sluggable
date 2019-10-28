@@ -28,9 +28,9 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => $this->getTempDirectory().'/database.sqlite',
-            'prefix' => '',
+            'driver'   => 'sqlite',
+            'database' => $this->getTempDirectory() . '/database.sqlite',
+            'prefix'   => '',
         ]);
     }
 
@@ -39,23 +39,27 @@ abstract class TestCase extends Orchestra
      */
     protected function setUpDatabase(Application $app)
     {
-        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
+        file_put_contents($this->getTempDirectory() . '/database.sqlite', null);
 
-        $app['db']->connection()->getSchemaBuilder()->create('test_models', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('slug')->nullable();
-            $table->string('other_field')->nullable();
-            $table->timestamps();
-        });
+        $app['db']->connection()
+            ->getSchemaBuilder()
+            ->create('test_models', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name')->nullable();
+                $table->string('slug')->nullable();
+                $table->string('other_field')->nullable();
+                $table->timestamps();
+            });
 
-        $app['db']->connection()->getSchemaBuilder()->create('test_model_soft_deletes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('slug')->nullable();
-            $table->string('other_field')->nullable();
-            $table->softDeletes();
-        });
+        $app['db']->connection()
+            ->getSchemaBuilder()
+            ->create('test_model_soft_deletes', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name')->nullable();
+                $table->string('slug')->nullable();
+                $table->string('other_field')->nullable();
+                $table->softDeletes();
+            });
     }
 
     protected function initializeDirectory(string $directory)
@@ -64,11 +68,13 @@ abstract class TestCase extends Orchestra
             File::deleteDirectory($directory);
         }
 
-        File::makeDirectory($directory);
+        if (!File::isDirectory($directory)) {
+            File::makeDirectory($directory);
+        }
     }
 
-    public function getTempDirectory() : string
+    public function getTempDirectory(): string
     {
-        return __DIR__.'/temp';
+        return __DIR__ . '/temp';
     }
 }
