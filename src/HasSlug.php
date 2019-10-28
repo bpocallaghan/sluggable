@@ -170,12 +170,30 @@ trait HasSlug
      */
     protected function getExistingSlugs($slug)
     {
-        return static::where($this->slugOptions->slugField, 'LIKE', "{$slug}%")
-            ->withoutGlobalScopes()// ignore scopes
-            ->withTrashed()// trashed, when entry gets activated again
-            ->orderBy($this->slugOptions->slugField)
+        $query = static::where($this->slugOptions->slugField, 'LIKE', "{$slug}%")
+            ->withoutGlobalScopes();
+
+        // if model uses softdelete
+        if ($this->usesSoftDeletes()) {
+            $query->withTrashed();
+        }
+
+        return $query->orderBy($this->slugOptions->slugField)
             ->get()
             ->pluck($this->slugOptions->slugField);
+    }
+
+    /**
+     * Check if model uses soft deletes trait or not
+     * @return bool
+     */
+    protected function usesSoftDeletes()
+    {
+        if (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this))) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
