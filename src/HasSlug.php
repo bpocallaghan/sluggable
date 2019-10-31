@@ -103,9 +103,15 @@ trait HasSlug
      */
     protected function generateNonUniqueSlug()
     {
-        $slug = $this->getSlugSourceString();
+        $source = $this->getSlugSourceString();
 
-        return Str::slug($slug, $this->slugOptions->slugSeparator);
+        $slug = Str::slug($source, $this->slugOptions->slugSeparator);
+
+        if ($slug === '' && $source !== '') {
+            $slug = $this->slugOptions->slugSeparator;
+        }
+
+        return $slug;
     }
 
     /**
