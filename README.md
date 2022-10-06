@@ -74,7 +74,9 @@ class YourEloquentModel extends Model
 
 ## Config
 
-You do not have to add the method in you model (the above will be used as default). It is only needed when you want to change the default behaviour.
+You do not have to add the method in you model (the above will be used as default). 
+
+It is only needed when you want to change the default behaviour.
 
 By default it will generate a slug from the `name` and save to the `slug` column.
 
