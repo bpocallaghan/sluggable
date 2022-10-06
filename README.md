@@ -74,7 +74,9 @@ class YourEloquentModel extends Model
 
 ## Config
 
-You do not have to add the method in you model (the above will be used as default). It is only needed when you want to change the default behaviour.
+You do not have to add the method in you model (the above will be used as default). 
+
+It is only needed when you want to change the default behaviour.
 
 By default it will generate a slug from the `name` and save to the `slug` column.
 
@@ -93,4 +95,4 @@ Have a look [here for the options](https://github.com/bpocallaghan/sluggable/blo
 Please see the [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 #### Demonstration
-See it in action at a [Laravel Admin Starter](https://github.com/bpocallaghan/laravel-admin-starter) project.
+See it in action at a [Laravel Admin Starter](https://github.com/bpocallaghan/titan-starter-website) project.
