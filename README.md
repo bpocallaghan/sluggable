@@ -93,4 +93,4 @@ Have a look [here for the options](https://github.com/bpocallaghan/sluggable/blo
 Please see the [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
 #### Demonstration
-See it in action at a [Laravel Admin Starter](https://github.com/bpocallaghan/laravel-admin-starter) project.
+See it in action at a [Laravel Admin Starter](https://github.com/bpocallaghan/titan-starter-website) project.
