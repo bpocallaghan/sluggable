@@ -9,21 +9,23 @@
         "unique"
     ],
     "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Ben-Piet O'Callaghan",
             "email": "bpocallaghan@gmail.com",
-            "homepage": "http://bpocallaghan.co.za",
+            "homepage": "http://bpocallaghan.ie",
             "role": "Developer"
         }
     ],
     "require": {
-        "php" : "^7.2",
-        "illuminate/database": "^6.0",
-        "illuminate/support": "^6.0"
+        "php": "^8.2",
+        "illuminate/database": "^11.0",
+        "illuminate/support": "^11.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0"
+        "orchestra/testbench": "^9.0"
     },
     "autoload": {
         "psr-4": {

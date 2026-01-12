@@ -2,9 +2,9 @@
 
 namespace Bpocallaghan\Sluggable\Tests;
 
-use File;
 use Illuminate\Foundation\Application;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\File;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -47,6 +47,7 @@ abstract class TestCase extends Orchestra
                 $table->increments('id');
                 $table->string('name')->nullable();
                 $table->string('slug')->nullable();
+                $table->string('url')->nullable();
                 $table->string('other_field')->nullable();
                 $table->timestamps();
             });

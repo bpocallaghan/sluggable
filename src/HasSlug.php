@@ -2,8 +2,8 @@
 
 namespace Bpocallaghan\Sluggable;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait HasSlug
 {
@@ -39,7 +39,7 @@ trait HasSlug
     {
         $this->slugOptions = $this->getSlugOptions();
 
-        if (!$this->slugOptions->generateSlugOnCreate) {
+        if (! $this->slugOptions->generateSlugOnCreate) {
             return;
         }
 
@@ -53,25 +53,55 @@ trait HasSlug
     {
         $this->slugOptions = $this->getSlugOptions();
 
-        if (!$this->slugOptions->generateSlugOnUpdate) {
+        if (! $this->slugOptions->generateSlugOnUpdate) {
             return;
         }
 
-        // check updating
-        $slugNew = $this->generateNonUniqueSlug();
-        $slugCurrent = $this->attributes[$this->slugOptions->slugField];
+        // Check if any of the source fields used to generate the slug have changed
+        $sourceFieldsChanged = $this->hasSlugSourceChanged();
 
-        // if new base slug is in string as old slug (the slug source's value did not change)
-        // see if the slug is still unique in database
-        if (strpos($slugCurrent, $slugNew) === 0) {
-            $slugUpdate = $this->checkUpdatingSlug($slugCurrent);
-            // no need to update slug (slug is still unique)
-            if ($slugUpdate !== false) {
-                return;
-            }
+        // If source fields changed, always regenerate the slug
+        if ($sourceFieldsChanged) {
+            $this->createSlug();
+
+            return;
+        }
+
+        // Otherwise, check if current slug is still valid
+        $slugCurrent = $this->attributes[$this->slugOptions->slugField];
+        $slugUpdate = $this->checkUpdatingSlug($slugCurrent);
+        // no need to update slug (slug is still unique)
+        if ($slugUpdate !== false) {
+            return;
         }
 
         $this->createSlug();
+    }
+
+    /**
+     * Check if any of the source fields used to generate the slug have changed.
+     *
+     * @return bool
+     */
+    protected function hasSlugSourceChanged()
+    {
+        $sourceFields = is_array($this->slugOptions->generateSlugFrom)
+            ? $this->slugOptions->generateSlugFrom
+            : [$this->slugOptions->generateSlugFrom];
+
+        // If it's a callable, we can't easily check if it changed, so always regenerate
+        if (is_callable($this->slugOptions->generateSlugFrom)) {
+            return true;
+        }
+
+        // Check if any of the source fields are dirty
+        foreach ($sourceFields as $field) {
+            if ($this->isDirty($field)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -103,15 +133,9 @@ trait HasSlug
      */
     protected function generateNonUniqueSlug()
     {
-        $source = $this->getSlugSourceString();
+        $slug = $this->getSlugSourceString();
 
-        $slug = Str::slug($source, $this->slugOptions->slugSeparator);
-
-        if ($slug === '' && $source !== '') {
-            $slug = $this->slugOptions->slugSeparator;
-        }
-
-        return $slug;
+        return Str::slug($slug, $this->slugOptions->slugSeparator);
     }
 
     /**
@@ -136,7 +160,7 @@ trait HasSlug
 
     /**
      * Make the slug unique with suffix
-     * @param $slug
+     *
      * @return string
      */
     protected function makeSlugUnique($slug)
@@ -153,14 +177,14 @@ trait HasSlug
         }
 
         // collection to array
-        if (!is_array($list)) {
+        if (! is_array($list)) {
             $list = $list->toArray();
         }
 
         // loop through the list and add suffix
-        while (!$slugIsUnique) {
-            $uniqueSlug = $slug . $this->slugOptions->slugSeparator . ($i++);
-            if (!in_array($uniqueSlug, $list)) {
+        while (! $slugIsUnique) {
+            $uniqueSlug = $slug.$this->slugOptions->slugSeparator.($i++);
+            if (! in_array($uniqueSlug, $list)) {
                 $slugIsUnique = true;
             }
         }
@@ -171,17 +195,16 @@ trait HasSlug
     /**
      * Get existing slugs matching slug
      *
-     * @param $slug
      * @return \Illuminate\Support\Collection|static
      */
     protected function getExistingSlugs($slug)
     {
         $query = static::where($this->slugOptions->slugField, 'LIKE', "{$slug}%")
-            ->withoutGlobalScopes();
+            ->withoutGlobalScopes(); // ignore scopes
 
-        // if model uses softdelete
+        // Only include trashed records if the model uses SoftDeletes
         if ($this->usesSoftDeletes()) {
-            $query->withTrashed();
+            $query->withTrashed(); // trashed, when entry gets activated again
         }
 
         return $query->orderBy($this->slugOptions->slugField)
@@ -190,16 +213,16 @@ trait HasSlug
     }
 
     /**
-     * Check if model uses soft deletes trait or not
+     * Check if the model uses SoftDeletes trait
+     *
      * @return bool
      */
     protected function usesSoftDeletes()
     {
-        if (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this))) {
-            return true;
-        }
-
-        return false;
+        return in_array(
+            'Illuminate\Database\Eloquent\SoftDeletes',
+            class_uses_recursive(static::class)
+        );
     }
 
     /**
@@ -207,7 +230,6 @@ trait HasSlug
      * Find entries with same slug
      * Exlude current model's entry
      *
-     * @param $slug
      * @return bool
      */
     private function checkUpdatingSlug($slug)
@@ -219,7 +241,7 @@ trait HasSlug
                 ->first();
 
             // no entries, save to use current slug
-            if (!$exist) {
+            if (! $exist) {
                 return $slug;
             }
         }
